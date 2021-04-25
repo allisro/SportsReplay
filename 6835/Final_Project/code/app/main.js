@@ -1,32 +1,41 @@
-const { BIconHandIndex } = require("bootstrap-vue");
-
 var cursor = new Cursor();
 
 // UI SETUP
 setupUserInterface();
 
-// Leap.loop({enableGestures: true}, function(frame) {
-//     var cursorPosition = [frame.hand.screenPosition()[0], frame.hand.screenPosition()[1]+250];
-//     cursor.setScreenPosition(cursorPosition);
-//     // gesture stuff
-//     if (frame.gestures == "swipe" && (frame.pointables[0].speed > 0)) {
-//         console.log("rewind");
-//     } else if (frame.gestures == "swipe" && (frame.pointables[0].speed < 0)) {
-//         console.log("fast forwatd");
-//     } else if (frame.gestures == "keyTap") {
-//         console.log("play");
-//     } else if (frame.hand.palmNormal == [0,0,1]) {
-//         console.log("pause");
-//     }
+var max_z = -0.85;
+var min_z  = -1;
 
-
-// }).use('screenPosition', {scale: LEAPSCALE});
-Leap.loop({ hand: function(hand) {
-        var cursorPosition = [frame.hand.screenPosition()[0], frame.hand.screenPosition()[1]+250];
-        cursor.setScreenPosition(cursorPosition);
+Leap.loop({enableGestures: true}, function(frame) {
+    // var cursorPosition = [frame.hand.screenPosition()[0], frame.hand.screenPosition()[1]+250];
+    // cursor.setScreenPosition(cursorPosition);
+    
+    // gesture stuff
+    if (frame.valid && frame.gestures.length > 0) {
+        frame.gestures.forEach(function(gesture) {
+            if (gesture.type == "swipe") {
+                if (gesture.direction[0] > 0) {
+                    console.log("fast forward");
+                } else {
+                    console.log("rewind")
+                }
+            } else if (gesture.type == "keyTap") {
+                console.log("play");
+            }
+        });
     }
 
-}).use('screenPosition', {scale: LEAPSCALE});
+    // pause "gesture"
+    if (frame.valid && frame.hands.length > 0) {
+        frame.hands.forEach(function(hand) {
+            if (min_z <= frame.hands[0].palmNormal[2] && frame.hands[0].palmNormal[2] <= max_z) {
+                    console.log("pause");
+                }
+        })
+    }
+
+});
+//.use('screenPosition', {scale: LEAPSCALE});
 
 // processSpeech(transcript)
 //  Is called anytime speech is recognized by the Web Speech API
@@ -68,3 +77,4 @@ var registerCommand = function(userResponse) {
         }
     }
 }
+
