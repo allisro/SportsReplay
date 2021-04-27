@@ -12,7 +12,7 @@ var background, video, otherFeedback;
 var setupUserInterface = function() {
   var mainContext = Engine.createContext();
   background = new Surface({
-    content: `<h1>Sports Replay</h1>`,
+    content: "",
     properties: {
       backgroundColor: "white",
       color: "black"
@@ -21,9 +21,13 @@ var setupUserInterface = function() {
   mainContext.add(background);
 
   video = new Surface({
-    content: '<div id="video-placeholder"><div>',
+    content: '<div id="video-placeholder"></div>',
+    // content: '<div id="video-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"><div>',
     properties: {
-      paddingTop: "100px"
+      // position: "relative",
+      // width: "100%",
+      // paddingBottom: "56.25%"
+      // paddingTop: "100px"
     }
   });
 
