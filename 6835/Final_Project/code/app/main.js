@@ -5,62 +5,72 @@ setupUserInterface();
 
 var pauseGesture = false;
 
-var TRACKING = true;
-var t = 0;
-var calibrationPeriod = 50;
-var sampleFrequency = 4;
-
-
 var max_z = -0.85;
 var min_z  = -1;
 
+canvas = d3.select('div#famo')
+        .append('canvas')
+        .attr('width', 640)
+        .attr('height', 360).node();
+
+// var canvas = document.getElementById('famo');
+var ctx = canvas.getContext('2d');
+var width = canvas.width, height = canvas.height;
+var color = d3.scale.category20();
+var before = {};
+var after = {};
+
+ctx.lineWidth = 5;
+ctx.translate(width/2, height/2);
+
+var frame_num = 0;
+
 Leap.loop({enableGestures: true}, function(frame) {
-    // var cursorPosition = [frame.hand.screenPosition()[0], frame.hand.screenPosition()[1]+250];
-    // cursor.setScreenPosition(cursorPosition);
+    //ctx.clearRect(0, 0, width, height);
 
     // gesture stuff
     if (frame.valid && frame.gestures.length > 0) {
         frame.gestures.forEach(function(gesture) {
             if (gesture.type == "swipe") {
                 if (gesture.direction[0] > 0) {
-                    registerGesture("fast-forward");
+                    //registerGesture("fast-forward");
                 } else {
-                    registerGesture("rewind");
+                    //registerGesture("rewind");
                 }
-            } else if (gesture.type == "keyTap") {
-                registerGesture("play");
             }
+            // } else if (gesture.type == "keyTap") {
+            //     //registerGesture("play");
+            // }
         });
 
     // pause "gesture"
     } else if (frame.valid && frame.hands.length > 0) {
         frame.hands.forEach(function(hand) {
             if (min_z <= hand.palmNormal[2] && hand.palmNormal[2] <= max_z) {
+                    frame_num += 1;
                     pauseGesture = true;
+
+            // drawing
             } else if (hand.indexFinger.extended && hand.thumb.extended && !hand.pinky.extended 
                 && !hand.middleFinger.extended && !hand.ringFinger.extended) {
-                console.log('draw');
+                after = {}
+                after[hand.indexFinger.id] = hand.indexFinger;
+
+                drawCircle();
             }
         });
+
+    // no gesture or hands
+    } else {
+        frame_num = 0;
     }
 
-    if (pauseGesture) {
+    if (pauseGesture && frame_num === 1) {
         registerGesture("pause");
         pauseGesture = false;
     }
 
-    // if (frame.tools.length > 0 && TRACKING) {
-    //     // if (t < calibrationPeriod) {
-    //     //     if (t === 0) {
-    //     //         console.log("Calibrating...");
-    //     //     }
-    //     // }
-    //     console.log(frame.tools[0]);
-    // }
-    //console.log(frame.tools);
-
 });
-//.use('screenPosition', {scale: LEAPSCALE});
 
 
 
@@ -81,7 +91,7 @@ var processSpeech = function(transcript) {
     };
 
     var processed = false;
-    var response = userSaid(transcript.toLowerCase(), ['play', 'pause', 'rewind', 'fast forward']);
+    var response = userSaid(transcript.toLowerCase(), ['play', 'pause', 'rewind', 'fast forward', 'stop']);
     if (response) {
         var trans = transcript.toLowerCase();
         registerCommand(trans);
@@ -94,8 +104,9 @@ var registerCommand = function(userResponse) {
     var currentTime = player.getCurrentTime();
 
     if (userResponse.includes('play')) {
+        ctx.clearRect(-310, -180, 640, 360);
         player.playVideo();
-    } else if (userResponse.includes('pause')) {
+    } else if (userResponse.includes('pause') || userResponse.includes('stop')) {
         player.pauseVideo();
     } else if (userResponse.includes('rewind')) {
         if (currentTime > 10) {
@@ -111,18 +122,18 @@ var registerCommand = function(userResponse) {
 var registerGesture = function(gest) {
     var currentTime = player.getCurrentTime();
 
-    // play video on keytap
+    //play video on keytap // not needed
     if (gest == "play") {
         player.playVideo();
     
     // pause video on palm out
     } else if (gest == "pause") {
         // // toggle effect
-        // if (player.getPlayerState() === 2) {
-        //     player.playVideo();
-        // } else {
+        if (player.getPlayerState() === 2 || player.getPlayerState() === 5) {
+            player.playVideo();
+        } else {
             player.pauseVideo();
-        //}
+        }
     // rewind video on left swipe
     } else if (gest == "rewind") {
         if (currentTime > 10) {
@@ -138,51 +149,30 @@ var registerGesture = function(gest) {
     }
 }
 
-// var paint = function() {
 
+// function leapToScene(position) {
+//     var x = position[0];
+//     var y = position[1];
+//     // Shift the Leap origin to the canvas's bottom center and invert the y-axis
+//     return [width/2 + x, height - y];
 // }
 
-// // // Adds the rigged hand plugin to the controller
-// visualizeHand = function(controller){
+function drawCircle() {
+    var a, b;
 
-//     controller.use('playback').on('riggedHand.meshAdded', function(handMesh, leapHand){
-//       handMesh.material.opacity = 0.8;
-//     });
-  
-//     var overlay = controller.plugins.playback.player.overlay;
-//     overlay.style.right = 0;
-//     overlay.style.left = 'auto';
-//     overlay.style.top = 'auto';
-//     overlay.style.padding = 0;
-//     overlay.style.bottom = '2px';
-//     overlay.style.width = '80px';
-  
-  
-//     controller.use('riggedHand', {
-//       scale: 0.8,
-//       boneColors: function (boneMesh, leapHand){
-//         if (boneMesh.name.indexOf('Finger_') == 0){
-//           if ((boneMesh.name.indexOf('Finger_0') == 0) || (boneMesh.name.indexOf('Finger_1') == 0)) {
-//                     return {
-//                       hue: 0.33,
-//                       saturation: leapHand.pinchStrength,
-//                       lightness: 0.5
-//                     }
-//           }
-//           return {
-//             hue: 0.55,
-//             saturation: leapHand.grabStrength,
-//             lightness: 0.5
-//           }
-//         }
-  
-//       }
-//     });
-  
-//     var camera = controller.plugins.riggedHand.camera;
-//     camera.position.set(0,10,-25);
-//     camera.lookAt(new THREE.Vector3(0,3,0));
-//   };
-  
-//   visualizeHand(Leap.loopController);
+    for (var id in after) {
+        b = before[id],
+        a = after[id];
+        if (!b) continue;
+    
+        ctx.strokeStyle = "yellow";
+        ctx.moveTo(b.tipPosition[0], -b.tipPosition[1]);
+        ctx.lineTo(a.tipPosition[0], -a.tipPosition[1]);
+        ctx.stroke();
+        ctx.beginPath();
+    }
+
+    before = after;
+}
+
 

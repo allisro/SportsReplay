@@ -34,6 +34,6 @@ recognition.onend = function(event) {
     if (DEBUGSPEECH)
       otherFeedback.setContent("SPEECH DEBUG: ready");
     recognition.start();
-  }, 1000);
+  }, 500); // 1000
 };
 recognition.start();

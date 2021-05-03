@@ -7,31 +7,35 @@ var StateModifier = famous.modifiers.StateModifier;
 var Draggable = famous.modifiers.Draggable;
 var GridLayout = famous.views.GridLayout;
 
-var background, video, otherFeedback;
+var video, otherFeedback;
 
 var setupUserInterface = function() {
   var mainContext = Engine.createContext();
-  background = new Surface({
-    content: "",
-    properties: {
-      backgroundColor: "white",
-      color: "black"
-    }
-  });
-  mainContext.add(background);
+  // background = new Surface({
+  //   content: "",
+  //   properties: {
+  //     backgroundColor: "white",
+  //     color: "black"
+  //   }
+  // });
+  // mainContext.add(background);
 
-  video = new Surface({
-    content: '<div id="video-placeholder"></div>',
-    // content: '<div id="video-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"><div>',
-    properties: {
-      // position: "relative",
-      // width: "100%",
-      // paddingBottom: "56.25%"
-      // paddingTop: "100px"
-    }
-  });
+  // video = new Surface({
+  //   content: `<div id="video-placeholder" style="position:absolute;"></div><canvas id="famo" width="640" height="360" style="z-index: 9;"></canvas>`,
+  //   // content: '<div id="video-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"><div>',
+  //   properties: {
+  //     // position: "relative",
+  //     // width: "100%",
+  //     // paddingBottom: "56.25%"
+  //     // paddingTop: "100px"
+  //   }
+  // });
+  // mainContext.add(video);
 
-  mainContext.add(video);
+  // cvs = new Surface({
+  //   content: '<canvas id="famo" width="640" height="360"></canvas>',
+  // });
+  // mainContext.add(cvs);
 
   otherFeedback = new Surface({
     content: "",
