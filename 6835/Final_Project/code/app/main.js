@@ -25,8 +25,10 @@ ctx.translate(width/2, height/2);
 
 var frame_num = 0;
 
+var drawing = false;
+
 Leap.loop({enableGestures: true}, function(frame) {
-    //ctx.clearRect(0, 0, width, height);
+    
 
     // gesture stuff
     if (frame.valid && frame.gestures.length > 0) {
@@ -43,7 +45,7 @@ Leap.loop({enableGestures: true}, function(frame) {
             // }
         });
 
-    // pause "gesture"
+    // pause gesture
     } else if (frame.valid && frame.hands.length > 0) {
         frame.hands.forEach(function(hand) {
             if (min_z <= hand.palmNormal[2] && hand.palmNormal[2] <= max_z) {
@@ -51,8 +53,18 @@ Leap.loop({enableGestures: true}, function(frame) {
                     pauseGesture = true;
 
             // drawing
+            } else if (hand.indexFinger.extended && !hand.thumb.extended && !hand.pinky.extended 
+                && !hand.middleFinger.extended && !hand.ringFinger.extended) {
+                // cursor finding
+                var cursorPosition = [hand.indexFinger.screenPosition()[0], hand.indexFinger.screenPosition()[1] - 250];
+                cursor.setScreenPosition(cursorPosition);
+                drawing = true; // do i need?
+
             } else if (hand.indexFinger.extended && hand.thumb.extended && !hand.pinky.extended 
                 && !hand.middleFinger.extended && !hand.ringFinger.extended) {
+                // actual drawing
+                var cursorPosition = [hand.indexFinger.screenPosition()[0], hand.indexFinger.screenPosition()[1] - 250];
+                cursor.setScreenPosition(cursorPosition);
                 after = {}
                 after[hand.indexFinger.id] = hand.indexFinger;
 
@@ -70,7 +82,7 @@ Leap.loop({enableGestures: true}, function(frame) {
         pauseGesture = false;
     }
 
-});
+}).use('screenPosition', {scale: LEAPSCALE});
 
 
 
@@ -130,6 +142,7 @@ var registerGesture = function(gest) {
     } else if (gest == "pause") {
         // // toggle effect
         if (player.getPlayerState() === 2 || player.getPlayerState() === 5) {
+            ctx.clearRect(-310, -180, 640, 360);
             player.playVideo();
         } else {
             player.pauseVideo();

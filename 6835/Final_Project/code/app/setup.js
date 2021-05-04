@@ -55,7 +55,7 @@ var setupUserInterface = function() {
   var cursorSurface = new Surface({
     size : [CURSORSIZE, CURSORSIZE],
     properties : {
-        backgroundColor: 'black',
+        backgroundColor: 'yellow',
         borderRadius: CURSORSIZE/2 + 'px',
         pointerEvents : 'none',
         zIndex: 1
