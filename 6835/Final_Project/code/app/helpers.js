@@ -2,8 +2,6 @@
 var voicesReady = false;
 window.speechSynthesis.onvoiceschanged = function() {
   voicesReady = true;
-  // Uncomment to see a list of voices
-  //console.log("Choose a voice:\n" + window.speechSynthesis.getVoices().map(function(v,i) { return i + ": " + v.name; }).join("\n"));
 };
 
 var generateSpeech = function(message, callback) {

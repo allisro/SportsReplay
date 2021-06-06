@@ -7,36 +7,11 @@ var StateModifier = famous.modifiers.StateModifier;
 var Draggable = famous.modifiers.Draggable;
 var GridLayout = famous.views.GridLayout;
 
-var video, otherFeedback;
+var otherFeedback;
 
 var setupUserInterface = function() {
   var mainContext = Engine.createContext();
-  // background = new Surface({
-  //   content: "",
-  //   properties: {
-  //     backgroundColor: "white",
-  //     color: "black"
-  //   }
-  // });
-  // mainContext.add(background);
-
-  // video = new Surface({
-  //   content: `<div id="video-placeholder" style="position:absolute;"></div><canvas id="famo" width="640" height="360" style="z-index: 9;"></canvas>`,
-  //   // content: '<div id="video-placeholder" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"><div>',
-  //   properties: {
-  //     // position: "relative",
-  //     // width: "100%",
-  //     // paddingBottom: "56.25%"
-  //     // paddingTop: "100px"
-  //   }
-  // });
-  // mainContext.add(video);
-
-  // cvs = new Surface({
-  //   content: '<canvas id="famo" width="640" height="360"></canvas>',
-  // });
-  // mainContext.add(cvs);
-
+  
   otherFeedback = new Surface({
     content: "",
     size: [undefined, 50],
@@ -49,14 +24,13 @@ var setupUserInterface = function() {
     origin: [0.0, 1.0],
     align: [0.0, 1.0]
   })
-  mainContext.add(otherModifier).add(otherFeedback);
+  //mainContext.add(otherModifier).add(otherFeedback);
 
     // Draw the cursor
   var cursorSurface = new Surface({
     size : [CURSORSIZE, CURSORSIZE],
     properties : {
-        backgroundColor: 'yellow',
-        borderRadius: CURSORSIZE/2 + 'px',
+        backgroundImage: 'url(../images/baseline_mode_black_24dp.png)',
         pointerEvents : 'none',
         zIndex: 1
     }
@@ -66,6 +40,12 @@ var setupUserInterface = function() {
     transform : function(){
       var cursorPosition = this.get('screenPosition');
       return Transform.translate(cursorPosition[0], cursorPosition[1], 0);
+      
+    }.bind(cursor),
+
+    opacity : function() {
+      var cursorOpacity = this.get('opacity');
+      return cursorOpacity;
     }.bind(cursor)
   });
   mainContext.add(cursorOriginModifier).add(cursorModifier).add(cursorSurface);

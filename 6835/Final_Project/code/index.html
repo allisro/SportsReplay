@@ -24,31 +24,65 @@
         <script type="text/javascript" src="lib/underscore.min.js"></script>
         <script type="text/javascript" src="lib/backbone.min.js"></script>
 
-        <!-- p5 -->
-        <!-- <script type="text/javascript" src="lib/p5.min.js"></script> -->
-
-        <!-- <script src="https://js.leapmotion.com/leap-0.6.2.min.js"></script> -->
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.js"></script> -->
-        <!-- <script src="https://js.leapmotion.com/leap-plugins-0.1.6.1.js"></script> -->
-        <!-- <script src="https://js.leapmotion.com/leap.rigged-hand-0.1.4.min.js"></script>
-        <script src="https://js.leapmotion.com/leap-plugins-0.1.10-utils.js"></script> -->
+        <!-- Youtube iFrame -->
         <script src="https://www.youtube.com/iframe_api"></script>
 
+        <!-- D3 -->
         <script src='lib/d3.v3.min.js'></script>
 
-        <!-- App code , strange version numbering for sketch js-->
+        <!-- <script type="text/javascript" src="lib/leaptrainer.min.js"></script> -->
+
+        <!-- App code -->
         <script type="text/javascript" src="app/config.js"></script>
         <script type="text/javascript" src="app/setup.js"></script>
         <script type="text/javascript" src="app/models.js"></script>
         <script type="text/javascript" src="app/helpers.js"></script>
-        <!-- <script type="text/javascript" src="app/sketch.js?verison=6"></script> -->
         <script type="text/javascript" src="app/Youtube.js"></script>
 
         <body>
-            <div id="famo" width="640" height="360" style="position:absolute;"></div>
-            <div id="video-placeholder"></div>
+            <div class="popup">
+                <div class="blocker"></div>
+                <div class="contents">
+                  <h2>Instructions</h2>
+                  <h4>Voice commands</h4>
+                  <ul>
+                      <li>"Play" - plays video</li>
+                      <li>"Pause"/"stop" - pauses video</li>
+                      <li>"Rewind" - rewinds video 10 seconds</li>
+                      <li>"Fast forward" - fast forward video 10 seconds</li>
+                      <li>"Slow mo"/"slow down" - plays video at 0.5 speed</li>
+                  </ul>
+                  <h4>Gesture Commands</h4>
+                    <ul>
+                      <li>Palm forward - toggles play/pause</li>
+                      <li>Swipe right to left with right hand - rewinds video 10 seconds</li>
+                      <li>Swipe left to right with left hand - fast forward video 10 seconds</li>
+                      <li>Swipe down - plays video at 0.5 speed</li>
+                    </ul>
+                  <h4>Drawing</h4>
+                    <ul>
+                        <li>Point with index finger to find cursor</li>
+                        <li>Extend thumb to start drawing!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="famo" style="min-height: 100%; min-width: 100%; position:absolute;"></div>
+            <div id="video-placeholder" style="min-height: 100%; min-width: 100%;"></div>
             <script type="text/javascript" src="app/main.js"></script>
             <script type="text/javascript" src="app/setupSpeech.js"></script>
         </body>
     </head>
+
+    <script>
+        var box = document.querySelector(".popup");
+
+        document.addEventListener("click", function(event) {
+            // If user clicks inside the element, do nothing
+            if (event.target.closest(".popup")) return;
+
+            // If user clicks outside the element, hide it
+            box.classList.add("js-is-hidden");
+        });
+    </script>
 </html>
